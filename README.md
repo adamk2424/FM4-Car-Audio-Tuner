@@ -10,6 +10,7 @@ Built for use with Xbox 360 disc dumps and the Xenia emulator.
 2. Place `FM4_CarAudioTuner.exe` in its own folder
 3. Launch the exe - first-run setup will download QuickBMS and guide you through locating your game files
 4. Select a car, tweak audio parameters, save, and export back to your game
+5. Fastest way to hear changes is to the car into Test Drive (or any track) and drive it. You can push changes, back out and reload the car on track and it will load the updated audio banks. Audio does not reload while driving, only at track/car load time.
 
 ## First-Run Setup
 
@@ -46,11 +47,11 @@ Click **Find Files** and select your game root directory and the tool will autom
 ### Audio Parameter Editing
 Each car has three audio components that make up the engine sound. Each as their own tab (**Intake**, **Engine**, **Exhaust**) for their behavior controls (Volume and Peak EQ and Lowpass filter, more on exhaust) plus a **Global Effects** tab. General advice: Intakes should usually only be heard when on throttle and silent when off; Exhausts should have an on/off throttle effect for positive and negative load to sound like a working engine.
 
-*IMPORTANT* When selecting components, do not map engine types that do not match together or it will sound bad/fake. This means you can mix and match sounds as long as they are part of the same harmonic groups based on cyclinder count. Those groups are:
-2,4,8,16
-3,6,12
-5,10
-Rotary
+### *IMPORTANT* When selecting components, do not map engine types that do not match together or it will sound bad/fake. This means you can mix and match sounds as long as they are part of the same harmonic groups based on cyclinder count. Those groups are:
+- 2,4,8,16
+- 3,6,12
+- 5,10
+- Rotary
 
 **Per-component controls:**
 - **Volume** - Gain curve with Active toggle (muting zeroes the curve; real values are preserved in a sidecar file)
