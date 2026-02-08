@@ -3,6 +3,7 @@ FM4 Car Audio Tuner
 Forza Motorsport 4 Engine Tuning XML Editor
 """
 
+import copy
 import json
 import os
 import re
@@ -582,6 +583,7 @@ class FM4CarAudioTuner:
         self.clone_enabled = tk.IntVar(value=0)
         self.clone_car_file = None       # Currently selected clone source
         self.clone_car_display = None    # Display name of clone source
+        self._pre_clone_tree = None      # Snapshot of original XML before cloning
 
         self._undo_stack = []
         self._redo_stack = []
@@ -1106,16 +1108,24 @@ class FM4CarAudioTuner:
 
     def _on_clone_checkbox_changed(self):
         if not self.clone_enabled.get():
-            # Unchecked - reload original car data if we had a clone active
-            if self.clone_car_file and self.current_car_file and self.current_tree is not None:
+            # Unchecked - restore from the pre-clone snapshot (saved before any
+            # clone data was loaded, so it survives Save overwriting the file)
+            if self.clone_car_file and self.current_car_file and self._pre_clone_tree is not None:
+                self.current_tree = copy.deepcopy(self._pre_clone_tree)
                 root = self.current_tree.getroot()
+
+                # Rewrite the file on disk with the original data
+                path = resolve_et_path(self.current_car_file)
+                if path:
+                    write_xml_file(self.current_tree, path)
+
                 self._load_emission_group(root, "EmissionGroup0", self.intake_tab)
                 self._load_emission_group(root, "EmissionGroup1", self.engine_tab)
                 self._load_emission_group(root, "EmissionGroup2", self.exhaust_tab)
                 self._load_vol_sidecar(self.current_car_file)
                 self._load_global_effects(root)
 
-                # Restore redline and component selectors from current car
+                # Restore redline and component selectors from original
                 settings = root.find("EngineSettings")
                 self.redline_var.set(settings.get("audio_rpm_redline", "") if settings is not None else "")
                 el = root.find("EngineAmbient/Upgrade")
@@ -1132,6 +1142,7 @@ class FM4CarAudioTuner:
 
             self.clone_car_file = None
             self.clone_car_display = None
+            self._pre_clone_tree = None
             self.clone_msg_var.set("")
 
     def _on_clone_car_selected(self, event):
@@ -1159,6 +1170,11 @@ class FM4CarAudioTuner:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to parse clone source {clone_file}:\n{e}")
             return
+
+        # Snapshot the original tree before first clone so we can restore later
+        # (Save will overwrite both current_tree and the file on disk)
+        if self._pre_clone_tree is None and self.current_tree is not None:
+            self._pre_clone_tree = copy.deepcopy(self.current_tree)
 
         self.clone_car_file = clone_file
         self.clone_car_display = clone_display
@@ -1255,6 +1271,7 @@ class FM4CarAudioTuner:
         idx = self._filtered_indices[sel[0]]
         car_file = self.car_files[idx]
         self.current_car_file = car_file
+        self._pre_clone_tree = None  # Clear stale clone snapshot when switching cars
 
         try:
             path = resolve_et_path(car_file)
