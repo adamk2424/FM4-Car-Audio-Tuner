@@ -1,6 +1,6 @@
 # FM4 Car Audio Tuner
 
-A standalone Windows GUI tool for editing Forza Motorsport 4 engine audio tuning data. Modify engine sounds by adjusting audio DSP parameters, swap audio profiles between cars, and manage game file backups.
+A standalone Windows GUI tool for editing Forza Motorsport 4 engine audio tuning data. Modify engine sounds by changing which component is loaded for intake, engine or exhaust, adjusting audio DSP parameters, clone a car's engine to sound like another, and manage game file changes with backup restoring.
 
 Built for use with Xbox 360 disc dumps and the Xenia emulator.
 
@@ -31,13 +31,26 @@ python setup_fm4tuner.py --headless C:\path\to\game\root
 
 ## Features
 
+### Find Files (DLC Support)
+Click **Find Files** and select your game root directory and the tool will automatically:
+- Discover DLC engine tuning and harmonic tuning XMLs scattered across content folders
+- Copy them into local working directories (`dlc_enginetuning/`, `dlc_harmonictuning/`)
+- Build a file mapping (`file_mapping.json`) so Export knows where to write files back
+- The mapping indicator dot turns green when file mapping is active
+
 ### Car Browser
-- Search and filter 500+ cars by name
+- Search and filter cars by name
 - Car list shows all available Engine Tuning (ET) XMLs from both the main game and DLC packs
 - Cylinder type auto-detects from the car's exhaust component
 
 ### Audio Parameter Editing
-Each car has three audio component tabs (**Intake**, **Engine**, **Exhaust**) plus a **Global Effects** tab.
+Each car has three audio components that make up the engine sound. Each as their own tab (**Intake**, **Engine**, **Exhaust**) for their behavior controls (Volume and Peak EQ and Lowpass filter, more on exhaust) plus a **Global Effects** tab. General advice: Intakes should usually only be heard when on throttle and silent when off; Exhausts should have an on/off throttle effect for positive and negative load to sound like a working engine.
+
+*IMPORTANT* When selecting components, do not map engine types that do not match together or it will sound bad/fake. This means you can mix and match sounds as long as they are part of the same harmonic groups based on cyclinder count. Those groups are:
+2,4,8,16
+3,6,12
+5,10
+Rotary
 
 **Per-component controls:**
 - **Volume** - Gain curve with Active toggle (muting zeroes the curve; real values are preserved in a sidecar file)
@@ -47,11 +60,11 @@ Each car has three audio component tabs (**Intake**, **Engine**, **Exhaust**) pl
 - **Load PEQ** (Exhaust only) - Positive and Negative load parametric EQ
 
 **Global effects:**
-- **FocusPEQ** - Global parametric EQ
-- **Distortion** - Level curve with volume compensation
+- **FocusPEQ** - Global parametric EQ applied to entire sound of the car.
+- **Distortion** - Adds intensity through distortion, but sounds crackly/clippy when pushed far. Includes bands and volume compensation
 - **Compressor** - Threshold, Attack, Release, GainMakeup
 - **ShiftVolumeScalar** - Gear shift volume boost parameters
-- **TrashDSP** - 3-band distortion/saturation with per-band curves
+- **TrashDSP** - 3-band distortion/saturation with per-band curves. Distortion Type has 0, 1, 2 for different algorythms. 2 generally sound the most intense. 
 
 Each parameter has:
 - **PhysicsCoeff sliders** - RPM, Throttle, PosTorque, NegTorque (constrained to sum <= 1.0)
@@ -66,13 +79,6 @@ Copy all audio settings from one car to another:
 4. All audio parameters, component selections, and redline populate from the source car
 5. Click **Save** - the target car's file is written with the source car's audio settings
 6. Uncheck **Enable Clone** to restore the target car's original settings
-
-### Find Files (DLC Support)
-Click **Find Files** and select your game root directory to:
-- Discover DLC engine tuning and harmonic tuning XMLs scattered across content folders
-- Copy them into local working directories (`dlc_enginetuning/`, `dlc_harmonictuning/`)
-- Build a file mapping (`file_mapping.json`) so Export knows where to write files back
-- The mapping indicator dot turns green when file mapping is active
 
 ### Save and Export
 - **Save** - Writes changes to the local XML file (in the working directory)
