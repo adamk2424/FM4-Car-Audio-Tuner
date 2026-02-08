@@ -19,6 +19,7 @@ On first launch, the tool detects missing components and opens the setup wizard.
 - **Download QuickBMS** - Required for handling Xbox 360's proprietary ZIP compression (method 21 / XMemCompress). Standard tools like 7-Zip cannot read these files.
 - **Create the zip.bms script** - The extraction script QuickBMS needs.
 - **Locate and extract game ZIPs** - Point it at your FM4 game root (e.g. `C:\Emulators\FM4Plus\`) and it will find `enginetuning.zip` and `harmonictuning.zip`, extract all car XMLs, and create a backup of the original ZIP.
+- **Install audioengineconfig.xml** - Copies a patched audio engine config into your game's audio folder (see below).
 
 You can also run setup manually:
 ```
@@ -93,6 +94,20 @@ Copy all audio settings from one car to another:
 ### Undo / Redo
 - **Ctrl+Z** / **Ctrl+Y** - Up to 50 levels of undo/redo for all parameter changes
 
+## Audio Engine Config (audioengineconfig.xml)
+
+During setup, the tool installs a patched `audioengineconfig.xml` into your game's audio directory. This file controls the game's global audio mix and mastering settings. The included version changes the following values from the stock defaults:
+
+| Setting | Stock | Patched | Effect |
+|---------|-------|---------|--------|
+| `gamePlayerEngine` | 1.0 | 0.5 | Reduces player engine volume in the mix |
+| `gameCarWind` | 0.8 | 0.4 | Reduces wind noise |
+| `gameTire` | 1.0 | 1.3 | Boosts tire audio for better road feel |
+| `gameCollision` | 1.0 | 0.5 | Softens collision sounds |
+| `saturatorLevel` | 0.95 | 0.6 | **Key change** - reduces global saturation |
+
+The `saturatorLevel` was shipped at 0.95, which led to a lot of that crunchy/distorted sound that went too far. Setting it to 0.6 will make the game a bit quieter overall, and maybe a little less intense, but it cleans up a lot of that over-the-top distortion, so it's worth setting as a new default for all cars. Some cars are still very crunchy, but you can fix those by turning down their distortion overdrive on a per-engine basis using this tool.
+
 ## File Structure
 
 ```
@@ -100,6 +115,7 @@ FM4CarAudioTuner/
   FM4_CarAudioTuner.exe          # Main application
   FM4_CarAudioTuner.py           # Source code
   setup_fm4tuner.py              # First-run setup script
+  audioengineconfig.xml          # Patched game audio mix config (installed by setup)
   zip.bms                        # QuickBMS extraction script (created by setup)
   quickbms/
     quickbms.exe                 # Xbox 360 ZIP handler (downloaded by setup)

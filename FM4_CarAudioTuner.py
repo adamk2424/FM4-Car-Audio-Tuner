@@ -2195,12 +2195,25 @@ def _check_first_run():
             subprocess.run([QUICKBMS_EXE, ZIP_BMS, ht_zip, HT_DIR],
                            capture_output=True, timeout=300)
 
+        # Step 4: Deploy audioengineconfig.xml to game audio folder
+        audio_config_src = os.path.join(BASE_DIR, "audioengineconfig.xml")
+        if os.path.isfile(audio_config_src):
+            # Find the game's Media\audio directory
+            audio_dir = None
+            for dirpath, dirnames, filenames in os.walk(game_root):
+                if "audioengineconfig.xml" in filenames:
+                    audio_dir = dirpath
+                    break
+            if audio_dir:
+                shutil.copy2(audio_config_src, os.path.join(audio_dir, "audioengineconfig.xml"))
+
         et_count = len([f for f in os.listdir(ET_DIR) if f.endswith(".xml")]) if os.path.isdir(ET_DIR) else 0
         ht_count = len([f for f in os.listdir(HT_DIR) if f.endswith(".xml")]) if os.path.isdir(HT_DIR) else 0
         messagebox.showinfo("Setup Complete",
             f"Extraction finished!\n\n"
             f"Engine Tuning files: {et_count}\n"
-            f"Harmonic Tuning files: {ht_count}")
+            f"Harmonic Tuning files: {ht_count}\n"
+            f"Audio engine config: installed")
 
     root.destroy()
     return True
