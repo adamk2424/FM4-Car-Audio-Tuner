@@ -20,6 +20,7 @@ On first launch, the tool detects missing components and opens the setup wizard.
 - **Create the zip.bms script** - The extraction script QuickBMS needs.
 - **Locate and extract game ZIPs** - Point it at your FM4 game root (e.g. `C:\Emulators\FM4Plus\`) and it will find `enginetuning.zip` and `harmonictuning.zip`, extract all car XMLs, and create a backup of the original ZIP.
 - **Install audioengineconfig.xml** - Copies a patched audio engine config into your game's audio folder (see below).
+- **Install reflections.fev** - Copies a tuned vehicle reflections audio file into the game's Reflections folder for improved in-car sound reflections.
 
 You can also run setup manually:
 ```
@@ -116,6 +117,7 @@ FM4CarAudioTuner/
   FM4_CarAudioTuner.py           # Source code
   setup_fm4tuner.py              # First-run setup script
   audioengineconfig.xml          # Patched game audio mix config (installed by setup)
+  reflections.fev                # Tuned vehicle reflections audio (installed by setup)
   zip.bms                        # QuickBMS extraction script (created by setup)
   quickbms/
     quickbms.exe                 # Xbox 360 ZIP handler (downloaded by setup)

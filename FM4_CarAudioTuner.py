@@ -2224,13 +2224,22 @@ def _check_first_run():
             if audio_dir:
                 shutil.copy2(audio_config_src, os.path.join(audio_dir, "audioengineconfig.xml"))
 
+        # Step 5: Deploy reflections.fev to game Reflections folder
+        reflections_src = os.path.join(BASE_DIR, "reflections.fev")
+        if os.path.isfile(reflections_src):
+            for dirpath, dirnames, filenames in os.walk(game_root):
+                if "reflections.fev" in filenames:
+                    shutil.copy2(reflections_src, os.path.join(dirpath, "reflections.fev"))
+                    break
+
         et_count = len([f for f in os.listdir(ET_DIR) if f.endswith(".xml")]) if os.path.isdir(ET_DIR) else 0
         ht_count = len([f for f in os.listdir(HT_DIR) if f.endswith(".xml")]) if os.path.isdir(HT_DIR) else 0
         messagebox.showinfo("Setup Complete",
             f"Extraction finished!\n\n"
             f"Engine Tuning files: {et_count}\n"
             f"Harmonic Tuning files: {ht_count}\n"
-            f"Audio engine config: installed")
+            f"Audio engine config: installed\n"
+            f"Reflections audio: installed")
 
     root.destroy()
     return True
